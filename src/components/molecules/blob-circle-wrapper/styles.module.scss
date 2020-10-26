@@ -1,0 +1,19 @@
+@import "../../../styles/mixins.scss";
+@import "../../../styles/variables.scss";
+
+.blob-circle-warp {
+  width: 0px;
+  height: 0px;
+  overflow: hidden;
+}
+
+$blobSize: 100;
+
+.blob-circle {
+  position: absolute;
+  @include nw(-50%);
+  @include rect($blobSize * $PX);
+  z-index: 1;
+  margin-left: -($blobSize/2) * $PX;
+  margin-top: -($blobSize/2) * $PX;
+}

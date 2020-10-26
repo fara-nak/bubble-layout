@@ -1,12 +1,11 @@
-import React from 'react';
+import React from "react";
 
-import './App.css';
+import Scroller from "./components/templates/scroller/scroller";
+
+import "./App.css";
 
 function App() {
-  return (
-    
-  <div>bubble</div>
-  );
+  return <Scroller />;
 }
 
 export default App;

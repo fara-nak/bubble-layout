@@ -1,8 +1,21 @@
+@import "../../../styles/mixins.scss";
+@import "../../../styles/variables.scss";
+
+$particleSize: 150/2;
+$contentWidth: 540;
+$contentHeight: 280;
+
 .particle {
-    outline: 1px solid blue;
+  @include rect(2 * $particleSize * $PX);
+  position: absolute;
+  @include nw(0);
+  text-align: center;
+  display: block;
+  line-height: (2 * $particleSize) * $PX;
 
-}
-
-.particle__inner {
-outline: 1px solid yellow;
+  &__inner {
+    @include circle(100%);
+    position: absolute;
+    @include nw(0);
+  }
 }

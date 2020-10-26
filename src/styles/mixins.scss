@@ -1,0 +1,24 @@
+@mixin rect($arguments) {
+  width: $arguments;
+  height: $arguments;
+}
+
+@mixin nw($arguments) {
+  top: $arguments;
+  left: $arguments;
+}
+
+@mixin circle($arguments) {
+  @include rect($arguments);
+  border-radius: 50%;
+}
+
+@mixin easy-click() {
+  &:after {
+    content: "";
+    position: absolute;
+    @include rect(200%);
+    z-index: 1;
+    @include nw(-50%);
+  }
+}

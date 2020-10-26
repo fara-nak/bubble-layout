@@ -1,0 +1,23 @@
+.wrapper {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+}
+
+.particles {
+  perspective: 500px;
+  perspective-origin: 50% 50%;
+  overflow: visible;
+  position: relative;
+  user-select: none;
+  position: absolute;
+  z-index: 1;
+  tap-highlight-color: rgba(0, 0, 0, 0);
+  // transform translateZ(0)
+  user-select: none;
+  text-size-adjust: none;
+}
