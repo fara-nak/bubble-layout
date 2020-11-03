@@ -1,18 +1,21 @@
 import React from "react";
+
 import classes from "./styles.module.scss";
 
-function Particle({ dataLeft, dataTop, bckgrnd, particleRef }) {
-  console.log(particleRef);
+function Particle({ index, color, particleRef }) {
+  const left = index * 175;
+
   return (
     <div
       ref={particleRef || null}
-      dataleft={dataLeft}
-      datatop={dataTop}
+      dataleft={left}
+      datatop={0}
       className={classes["particle"]}
+      style={{ left: `${left}px`, top: "0px" }}
     >
       <div
         className={classes["particle__inner"]}
-        style={{ background: `${bckgrnd}` }}
+        style={{ background: `${color}` }}
       ></div>
     </div>
   );
