@@ -2,7 +2,7 @@ import React, { createRef, useEffect, useLayoutEffect, useRef } from "react";
 import IScroll from "iscroll";
 import mojs from "mo-js";
 
-import data from '../../../data.json';
+import data from "../../../data.json";
 import random from "../../../utils/random";
 import BlobCircleWrapper from "../../molecules/blob-circle-wrapper/blob-circle-wrapper";
 import Particle from "../../molecules/particle/particle";
@@ -20,12 +20,7 @@ function Scroller() {
   const particuleRadiusRef = useRef(null);
   const iscrollRef = useRef(null);
 
-  console.log(data.length);
-
   const { bubbleCenter, size } = useBubbleCenter(particleContainerRef);
-
-  console.log("BUBBLE CENTER 🧼", bubbleCenter);
-  console.log("📏 SIZE", size);
 
   if (particleRef.current.length !== particleLength) {
     particleRef.current = Array(particleLength)
@@ -72,7 +67,6 @@ function Scroller() {
             color={backgrounds[random(0, 4)]}
             bubbleCenter={bubbleCenter}
             size={size}
-
           />
         ))}
       </div>
