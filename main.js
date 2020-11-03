@@ -70,8 +70,8 @@ var main = {
           h = mojs.h, inEasing = mojs.easing.cubic.in, i = this.particlesLength;
       
       h.setPrefixedStyle(this.particlesContainer, 'perspective-origin', origin);
-  
       while(i--) {
+
         this.particleBuffer = this.particles[i];
         var x      = Math.abs(this.bubleCenter.x-this.particleBuffer.x),
             y      = Math.abs(this.bubleCenter.y-this.particleBuffer.y),

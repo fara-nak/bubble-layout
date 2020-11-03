@@ -1,21 +1,16 @@
-import React, {
-  createRef,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { createRef, useEffect, useLayoutEffect, useRef } from "react";
 import IScroll from "iscroll";
 import mojs from "mo-js";
 
+import data from '../../../data.json';
 import random from "../../../utils/random";
 import BlobCircleWrapper from "../../molecules/blob-circle-wrapper/blob-circle-wrapper";
 import Particle from "../../molecules/particle/particle";
 
 import styles from "./styles.module.scss";
+import useBubbleCenter from "./useBubbleCenter";
 
-const particleLength = 20;
-const blobBase = 1.6;
+const particleLength = data.length;
 
 const backgrounds = ["#FC2D79", "#FCB635", "#11CDC5", " #4A90E2", "#c1c1c1"];
 
@@ -25,15 +20,18 @@ function Scroller() {
   const particuleRadiusRef = useRef(null);
   const iscrollRef = useRef(null);
 
+  console.log(data.length);
+
+  const { bubbleCenter, size } = useBubbleCenter(particleContainerRef);
+
+  console.log("BUBBLE CENTER 🧼", bubbleCenter);
+  console.log("📏 SIZE", size);
+
   if (particleRef.current.length !== particleLength) {
     particleRef.current = Array(particleLength)
       .fill()
       .map((_, i) => particleRef.current[i] || createRef());
   }
-
-  // const [elRefs, setElRefs] = useState([]);
-  const [dimensions, setDimensions] = useState({ height: 0, width: 0 });
-  // const [isOpen, setIsOpen] = useState(false);
 
   useLayoutEffect(() => {
     iscrollRef.current = new IScroll("#wrapper", {
@@ -44,27 +42,23 @@ function Scroller() {
     });
   });
 
-  console.log("👽", particleRef);
-
-  console.log("📜", iscrollRef.current);
-
   useEffect(() => {
     if (particleRef.current.length && particleRef.current[0].current !== null) {
       particuleRadiusRef.current =
         parseInt(getComputedStyle(particleRef.current[0].current).width, 10) /
         2;
-      console.log("PARTICULE RADIUS 🧭", particuleRadiusRef.current);
     }
   }, []);
 
   useEffect(() => {
-    if (particleContainerRef.current) {
-      const { width, height } = getComputedStyle(particleContainerRef.current);
-      setDimensions({ width, height });
-    }
-  }, []);
-
-  console.log("DIMENSIONS", dimensions);
+    const origin = `${bubbleCenter.x}px ${bubbleCenter.y}px`;
+    const { h } = mojs;
+    h.setPrefixedStyle(
+      particleContainerRef.current,
+      "perspective-origin",
+      origin
+    );
+  }, [bubbleCenter]);
 
   return (
     <div id="wrapper" className={styles["wrapper"]}>
@@ -74,8 +68,11 @@ function Scroller() {
           <Particle
             key={`particle-${i}`}
             particleRef={particleRef.current[i]}
-            index={i}
+            position={data[i]}
             color={backgrounds[random(0, 4)]}
+            bubbleCenter={bubbleCenter}
+            size={size}
+
           />
         ))}
       </div>
