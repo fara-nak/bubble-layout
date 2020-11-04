@@ -20,13 +20,13 @@ function Scroller() {
   const particuleRadiusRef = useRef(null);
   const iscrollRef = useRef(null);
 
-  const { bubbleCenter, size } = useBubbleCenter(particleContainerRef);
-
   if (particleRef.current.length !== particleLength) {
     particleRef.current = Array(particleLength)
       .fill()
       .map((_, i) => particleRef.current[i] || createRef());
   }
+
+  
 
   useLayoutEffect(() => {
     iscrollRef.current = new IScroll("#wrapper", {
@@ -35,6 +35,12 @@ function Scroller() {
       mouseWheel: true,
       probeType: 3,
     });
+  });
+
+  const { bubbleCenter, size } = useBubbleCenter({
+    containerRef: particleContainerRef,
+    particleRef: particleRef.current[0],
+    iscroll: iscrollRef.current,
   });
 
   useEffect(() => {
