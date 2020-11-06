@@ -87,7 +87,7 @@ function Particle({
       <div
         className={classes["particle__inner"]}
         style={{ background: `${color}` }}
-      ></div>
+      >COUCOU</div>
     </div>
   );
 }

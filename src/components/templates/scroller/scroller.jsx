@@ -18,7 +18,7 @@ function Scroller() {
   const particleRef = useRef([]);
   const particleContainerRef = useRef(null);
   const particuleRadiusRef = useRef(null);
-  const iscrollRef = useRef(null);
+  const wrapperRef = useRef(null);
 
   if (particleRef.current.length !== particleLength) {
     particleRef.current = Array(particleLength)
@@ -26,21 +26,10 @@ function Scroller() {
       .map((_, i) => particleRef.current[i] || createRef());
   }
 
-  
-
-  useLayoutEffect(() => {
-    iscrollRef.current = new IScroll("#wrapper", {
-      scroll: true,
-      freeScroll: true,
-      mouseWheel: true,
-      probeType: 3,
-    });
-  });
-
   const { bubbleCenter, size } = useBubbleCenter({
     containerRef: particleContainerRef,
     particleRef: particleRef.current[0],
-    iscroll: iscrollRef.current,
+    wrapperRef,
   });
 
   useEffect(() => {
@@ -52,17 +41,19 @@ function Scroller() {
   }, []);
 
   useEffect(() => {
-    const origin = `${bubbleCenter.x}px ${bubbleCenter.y}px`;
-    const { h } = mojs;
-    h.setPrefixedStyle(
-      particleContainerRef.current,
-      "perspective-origin",
-      origin
-    );
+    if (particleContainerRef.current) {
+      const origin = `${bubbleCenter.x}px ${bubbleCenter.y}px`;
+      const { h } = mojs;
+      h.setPrefixedStyle(
+        particleContainerRef.current,
+        "perspective-origin",
+        origin
+      );
+    }
   }, [bubbleCenter]);
 
   return (
-    <div id="wrapper" className={styles["wrapper"]}>
+    <div ref={wrapperRef} className={styles["wrapper"]}>
       <div ref={particleContainerRef} className={styles["particles"]}>
         <BlobCircleWrapper />
         {Array.from({ length: particleLength }).map((_, i) => (
