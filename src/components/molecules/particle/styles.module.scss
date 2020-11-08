@@ -8,11 +8,10 @@ $contentHeight: 280;
 .particle {
   @include rect(2 * $particleSize * $PX);
   position: absolute;
-  // @include nw(0);
+  @include nw(0);
   text-align: center;
   display: block;
   line-height: (2 * $particleSize) * $PX;
-  outline: 1px solid yellow;
 
   &__is-open {
     z-index: 20;
@@ -21,7 +20,6 @@ $contentHeight: 280;
   &__inner {
     @include circle(100%);
     position: absolute;
-    // @include nw(0);
-    outline: 1px solid green;
+    @include nw(0);
   }
 }

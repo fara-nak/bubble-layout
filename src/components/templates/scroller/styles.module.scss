@@ -16,8 +16,17 @@
   user-select: none;
   position: absolute;
   z-index: 1;
-  tap-highlight-color: rgba(0, 0, 0, 0);
-  // transform translateZ(0)
+  // tap-highlight-color: rgba(0, 0, 0, 0);
   user-select: none;
   text-size-adjust: none;
+  margin-left: -175px;
+  margin-top: -175px;
+  width: 3865px;
+  height: 2875px;
+
+  /*
+  sur autre chose que desktop : 
+      width:  1675px;
+      height: 1200px;
+  */
 }

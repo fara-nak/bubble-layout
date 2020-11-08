@@ -1,69 +1,98 @@
-import React, { createRef, useEffect, useLayoutEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import IScroll from "iscroll";
 import mojs from "mo-js";
 
-import data from "../../../data.json";
 import random from "../../../utils/random";
 import BlobCircleWrapper from "../../molecules/blob-circle-wrapper/blob-circle-wrapper";
 import Particle from "../../molecules/particle/particle";
 
 import styles from "./styles.module.scss";
-import useBubbleCenter from "./useBubbleCenter";
+import useDimensions from "../../../hooks/useDimensions";
+import { useLayoutEffect } from "react";
 
-const particleLength = data.length;
+const particleLength = 600;
 
 const backgrounds = ["#FC2D79", "#FCB635", "#11CDC5", " #4A90E2", "#c1c1c1"];
 
 function Scroller() {
-  const particleRef = useRef([]);
-  const particleContainerRef = useRef(null);
-  const particuleRadiusRef = useRef(null);
-  const wrapperRef = useRef(null);
+  const bubbleCenter = useRef({});
+  const size = useRef();
 
-  if (particleRef.current.length !== particleLength) {
-    particleRef.current = Array(particleLength)
-      .fill()
-      .map((_, i) => particleRef.current[i] || createRef());
-  }
+  const iscroll = useRef(null);
 
-  const { bubbleCenter, size } = useBubbleCenter({
-    containerRef: particleContainerRef,
-    particleRef: particleRef.current[0],
-    wrapperRef,
-  });
+  const getRadius = useCallback(
+    (ref) => parseInt(getComputedStyle(ref.current[0].current).width, 10) / 2,
+    []
+  );
 
-  useEffect(() => {
-    if (particleRef.current.length && particleRef.current[0].current !== null) {
-      particuleRadiusRef.current =
-        parseInt(getComputedStyle(particleRef.current[0].current).width, 10) /
-        2;
-    }
+  const [particleRef, particleRadius] = useDimensions(
+    particleLength,
+    getRadius
+  );
+
+  const getWidthAndHeight = useCallback((ref) => {
+    const { width, height } = getComputedStyle(ref.current);
+    return { width: parseInt(width, 10), height: parseInt(height, 10) };
   }, []);
 
+  const [containerRef, dimensions] = useDimensions(false, getWidthAndHeight);
+
+  // const radPoint = useCallback((el) => mojs.helpers.getRadialPoint(el), []);
+
+  const xOffset = particleRadius && particleRadius + 25;
+  const yOffset = 1.4 * particleRadius;
+  const wWidth = window.innerWidth;
+  const wHeight = window.innerHeight;
+
+  const setBubblePosition = () => {
+    const x = iscroll.x + wWidth / 2 + xOffset;
+    const y = iscroll.y + wHeight / 2 + yOffset;
+    bubbleCenter.current = { x, y };
+  };
+
   useEffect(() => {
-    if (particleContainerRef.current) {
-      const origin = `${bubbleCenter.x}px ${bubbleCenter.y}px`;
-      const { h } = mojs;
-      h.setPrefixedStyle(
-        particleContainerRef.current,
-        "perspective-origin",
-        origin
-      );
+    if (dimensions && iscroll) {
+      const { width, height } = dimensions;
+      const centerY = height / 2 - wHeight / 2;
+      const centerX = width / 2 - wWidth / 2;
+      const x = -centerX + wWidth / 2 + xOffset;
+      const y = -centerY + wHeight / 2 + yOffset;
+      iscroll.current = new IScroll("#wrapper", {
+        scrollX: true,
+        freeScroll: true,
+        mouseWheel: true,
+        probType: 3,
+      });
+      iscroll.current.scrollTo(x, y, 10);
+      iscroll.current.on("scroll", setBubblePosition);
+      bubbleCenter.current = { x: centerX, y: centerY };
+      size.current =
+        1 * Math.min(Math.sqrt(wHeight * wHeight), Math.sqrt(wWidth * wWidth));
     }
-  }, [bubbleCenter]);
+  }, [
+    dimensions,
+    iscroll,
+    setBubblePosition,
+    wHeight,
+    wWidth,
+    xOffset,
+    yOffset,
+  ]);
 
   return (
-    <div ref={wrapperRef} className={styles["wrapper"]}>
-      <div ref={particleContainerRef} className={styles["particles"]}>
+    <div
+      id="wrapper"
+      onScroll={() => console.log("COUCOU")}
+      className={styles["wrapper"]}
+    >
+      <div ref={containerRef} className={styles["particles"]}>
         <BlobCircleWrapper />
         {Array.from({ length: particleLength }).map((_, i) => (
           <Particle
+            index={i}
             key={`particle-${i}`}
             particleRef={particleRef.current[i]}
-            position={data[i]}
             color={backgrounds[random(0, 4)]}
-            bubbleCenter={bubbleCenter}
-            size={size}
           />
         ))}
       </div>
