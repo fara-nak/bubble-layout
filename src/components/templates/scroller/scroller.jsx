@@ -44,11 +44,11 @@ function Scroller() {
   const wWidth = window.innerWidth;
   const wHeight = window.innerHeight;
 
-  const setBubblePosition = () => {
+  const setBubblePosition = useCallback(() => {
     const x = iscroll.x + wWidth / 2 + xOffset;
     const y = iscroll.y + wHeight / 2 + yOffset;
     bubbleCenter.current = { x, y };
-  };
+  });
 
   useEffect(() => {
     if (dimensions && iscroll) {
@@ -64,10 +64,11 @@ function Scroller() {
         probType: 3,
       });
       iscroll.current.scrollTo(x, y, 10);
-      iscroll.current.on("scroll", setBubblePosition);
       bubbleCenter.current = { x: centerX, y: centerY };
       size.current =
         1 * Math.min(Math.sqrt(wHeight * wHeight), Math.sqrt(wWidth * wWidth));
+
+      console.log(getComputedStyle(document.querySelector("#wrapper")).height);
     }
   }, [
     dimensions,
@@ -80,11 +81,7 @@ function Scroller() {
   ]);
 
   return (
-    <div
-      id="wrapper"
-      onScroll={() => console.log("COUCOU")}
-      className={styles["wrapper"]}
-    >
+    <div id="wrapper" onWheel={setBubblePosition} className={styles["wrapper"]}>
       <div ref={containerRef} className={styles["particles"]}>
         <BlobCircleWrapper />
         {Array.from({ length: particleLength }).map((_, i) => (
