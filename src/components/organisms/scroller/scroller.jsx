@@ -7,7 +7,6 @@ import React, {
 } from "react";
 import IScroll from "iscroll";
 
-import BlobCircleWrapper from "../../molecules/blob-circle-wrapper/blob-circle-wrapper";
 import Particle from "../../molecules/particle/particle";
 import styles from "./styles.module.scss";
 import useDimensions from "../../../hooks/useDimensions";
@@ -49,8 +48,6 @@ function Scroller() {
   }, []);
 
   const [containerRef, dimensions] = useDimensions(false, getWidthAndHeight);
-
-  // const radPoint = useCallback((el) => mojs.helpers.getRadialPoint(el), []);
 
   const xOffset = particleRadius && particleRadius + 25;
   const yOffset = 1.4 * particleRadius;
@@ -102,7 +99,6 @@ function Scroller() {
           perspectiveOrigin: `${bubleCenter.x}px ${bubleCenter.y}px`,
         }}
       >
-        <BlobCircleWrapper />
         {Array.from({ length: particleLength }).map((_, i) => (
           <Particle
             index={i}

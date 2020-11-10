@@ -1,0 +1,17 @@
+.container {
+  display: flex;
+  flex-grow: 1;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  height: 40vh;
+//   margin-bottom: 5rem;
+}
+
+.me-container {
+  width: 50%;
+}
+
+.hero {
+  font-weight: bold;
+}
