@@ -1,13 +1,17 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import IScroll from "iscroll";
-import mojs from "mo-js";
 
-import random from "../../../utils/random";
 import BlobCircleWrapper from "../../molecules/blob-circle-wrapper/blob-circle-wrapper";
 import Particle from "../../molecules/particle/particle";
-
 import styles from "./styles.module.scss";
 import useDimensions from "../../../hooks/useDimensions";
+import random from "../../../utils/random";
 import { useLayoutEffect } from "react";
 
 const particleLength = 600;
@@ -15,8 +19,17 @@ const particleLength = 600;
 const backgrounds = ["#FC2D79", "#FCB635", "#11CDC5", " #4A90E2", "#c1c1c1"];
 
 function Scroller() {
-  const bubbleCenter = useRef({});
-  const size = useRef();
+  const [bubleCenter, setBubleCenter] = useState({});
+  const [size, setSize] = useState(null);
+
+  const shuffle = useMemo(
+    () =>
+      Array.from(
+        { length: particleLength },
+        () => backgrounds[random(0, backgrounds.length)]
+      ),
+    []
+  );
 
   const iscroll = useRef(null);
 
@@ -43,53 +56,61 @@ function Scroller() {
   const yOffset = 1.4 * particleRadius;
   const wWidth = window.innerWidth;
   const wHeight = window.innerHeight;
+  const { width, height } = dimensions;
+  const centerY = height / 2 - wHeight / 2;
+  const centerX = width / 2 - wWidth / 2;
+  const x = -centerX + wWidth / 2 + xOffset;
+  const y = -centerY + wHeight / 2 + yOffset;
 
   const setBubblePosition = useCallback(() => {
-    const x = iscroll.x + wWidth / 2 + xOffset;
-    const y = iscroll.y + wHeight / 2 + yOffset;
-    bubbleCenter.current = { x, y };
-  });
+    const x = -iscroll.current.x + wWidth / 2 + xOffset;
+    const y = -iscroll.current.y + wHeight / 2 + yOffset;
+
+    setBubleCenter({ x, y });
+  }, [wHeight, wWidth, xOffset, yOffset]);
+
+  useLayoutEffect(() => {
+    iscroll.current = new IScroll("#wrapper", {
+      scrollX: true,
+      freeScroll: true,
+      mouseWheel: true,
+      probType: 3,
+    });
+    iscroll.current.scrollTo(x, y, 10);
+  }, [x, y]);
 
   useEffect(() => {
-    if (dimensions && iscroll) {
-      const { width, height } = dimensions;
-      const centerY = height / 2 - wHeight / 2;
-      const centerX = width / 2 - wWidth / 2;
-      const x = -centerX + wWidth / 2 + xOffset;
-      const y = -centerY + wHeight / 2 + yOffset;
-      iscroll.current = new IScroll("#wrapper", {
-        scrollX: true,
-        freeScroll: true,
-        mouseWheel: true,
-        probType: 3,
-      });
-      iscroll.current.scrollTo(x, y, 10);
-      bubbleCenter.current = { x: centerX, y: centerY };
-      size.current =
-        1 * Math.min(Math.sqrt(wHeight * wHeight), Math.sqrt(wWidth * wWidth));
-
-      console.log(getComputedStyle(document.querySelector("#wrapper")).height);
+    if (dimensions) {
+      setBubleCenter({ x: centerX, y: centerY });
+      setSize(
+        1 * Math.min(Math.sqrt(wHeight * wHeight), Math.sqrt(wWidth * wWidth))
+      );
     }
-  }, [
-    dimensions,
-    iscroll,
-    setBubblePosition,
-    wHeight,
-    wWidth,
-    xOffset,
-    yOffset,
-  ]);
+  }, [centerX, centerY, dimensions, wHeight, wWidth]);
+
+  useEffect(() => {
+    window.addEventListener("resize", setBubblePosition);
+    return () => window.removeEventListener("resize", setBubblePosition);
+  });
 
   return (
     <div id="wrapper" onWheel={setBubblePosition} className={styles["wrapper"]}>
-      <div ref={containerRef} className={styles["particles"]}>
+      <div
+        ref={containerRef}
+        className={styles["particles"]}
+        style={{
+          perspectiveOrigin: `${bubleCenter.x}px ${bubleCenter.y}px`,
+        }}
+      >
         <BlobCircleWrapper />
         {Array.from({ length: particleLength }).map((_, i) => (
           <Particle
             index={i}
             key={`particle-${i}`}
             particleRef={particleRef.current[i]}
-            color={backgrounds[random(0, 4)]}
+            color={shuffle[i]}
+            bubbleCenter={bubleCenter}
+            size={size}
           />
         ))}
       </div>
