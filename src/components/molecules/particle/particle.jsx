@@ -36,6 +36,8 @@ function Particle({
     return { delta, deltaShift };
   }, [blobShift, bubbleCenter.x, bubbleCenter.y, initX, initY, size]);
 
+  if (index === 2) console.log(deltas);
+
   return (
     <div
       ref={particleRef || null}
