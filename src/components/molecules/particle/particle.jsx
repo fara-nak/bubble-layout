@@ -17,6 +17,7 @@ function Particle({
   bubbleCenter,
   size,
   blobShift = blobBase,
+  children
 }) {
   const round = useMemo(() => Math.floor(index / lineLength), [index]);
   const initX = useMemo(() => (index % lineLength) * w + (round % 2) * margin, [
@@ -54,7 +55,7 @@ function Particle({
         className={classes["particle__inner"]}
         style={{ background: `${color}` }}
       >
-        COUCOU
+        {children}
       </div>
     </div>
   );
